@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "types": ["node", "next", "next-auth"],
+    "paths": {
+      "@app/*": ["app/*"],
+      "@styles": ["app/styles/globals.css"],
+      "@components/*": ["components/*"],
+      "@lib/*": ["lib/*"],
+      "@db": ["lib/db/prisma"],
+      "@schemas/*": ["lib/schemas/*"],
+      "@services/*": ["lib/services/*"],
+      "@types/*": ["lib/types/*"],
+      "@tv/*": ["lib/tv/*"],
+      "@utils/*": ["lib/utils/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "types"
+  ],
+  "exclude": ["node_modules"]
+}
