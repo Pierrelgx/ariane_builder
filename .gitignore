@@ -46,6 +46,4 @@ package-lock.json
 /prisma/migrations/
 /.vscode/
 
-# markdown documentation
-/markdown/
 
