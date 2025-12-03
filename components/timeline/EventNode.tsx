@@ -28,13 +28,13 @@ function EventNode({ data }: NodeProps<EventNodeData>) {
     <div
       className={`px-4 py-3 shadow-lg rounded-lg border-2 min-w-[200px] max-w-[300px] relative ${
         data.hasInconsistency
-          ? "bg-red-50 border-red-500"
-          : "bg-white border-blue-500"
+          ? "bg-red-900/30 border-red-500"
+          : "bg-gray-200 border-green-500"
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Handle type="target" position={Position.Top} className="w-3 h-3" />
+      <Handle type="target" position={Position.Top} className="w-3 h-3 !bg-green-500" />
 
       {/* Action buttons container */}
       <div
@@ -48,11 +48,11 @@ function EventNode({ data }: NodeProps<EventNodeData>) {
               e.stopPropagation();
               data.onEdit?.(data.id);
             }}
-            className="p-1 rounded hover:bg-blue-100 bg-white shadow-sm"
+            className="p-1 rounded hover:bg-green-500/20 bg-gray-300 shadow-sm"
             title="Modifier l'événement"
           >
             <svg
-              className="w-4 h-4 text-blue-600"
+              className="w-4 h-4 text-green-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -73,11 +73,11 @@ function EventNode({ data }: NodeProps<EventNodeData>) {
               e.stopPropagation();
               data.onDelete?.(data.id);
             }}
-            className="p-1 rounded hover:bg-red-100 bg-white shadow-sm"
+            className="p-1 rounded hover:bg-red-500/20 bg-gray-300 shadow-sm"
             title="Supprimer l'événement"
           >
             <svg
-              className="w-4 h-4 text-red-600"
+              className="w-4 h-4 text-red-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -103,19 +103,17 @@ function EventNode({ data }: NodeProps<EventNodeData>) {
         )}
 
         <div className="text-xs text-gray-500 flex items-center gap-1">
-          <span>📅</span>
           <span>{formattedDate}</span>
         </div>
 
         {data.hasInconsistency && (
-          <div className="text-xs text-red-600 font-semibold flex items-center gap-1">
-            <span>⚠️</span>
+          <div className="text-xs text-red-500 font-semibold flex items-center gap-1">
             <span>Incohérence temporelle</span>
           </div>
         )}
       </div>
 
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3" />
+      <Handle type="source" position={Position.Bottom} className="w-3 h-3 !bg-green-500" />
     </div>
   );
 }

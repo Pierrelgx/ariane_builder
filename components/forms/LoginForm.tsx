@@ -52,18 +52,19 @@ export const LoginForm = ({ handleClick }: loginFormProps) => {
 
   return (
     <div
-      className="fixed h-full w-full flex items-center justify-center backdrop-blur-sm bg-white/10 p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/50 p-6"
       onClick={handleClick}
     >
       <form
-        className="flex flex-col items-center space-y-4 bg-white p-6 rounded-xl shadow-lg w-full max-w-md mx-auto"
+        className="flex flex-col items-center space-y-4 bg-dark-200 p-6 rounded-xl shadow-lg w-full max-w-md mx-auto border border-dark-400"
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
       >
-        <div>
+        <h2 className="text-xl font-bold text-white mb-2">Connexion</h2>
+        <div className="w-full">
           <label
             htmlFor="email"
-            className="block text-sm text-emerald-700 mb-1"
+            className="block text-sm text-gray-300 mb-1"
           >
             Email
           </label>
@@ -76,14 +77,14 @@ export const LoginForm = ({ handleClick }: loginFormProps) => {
             placeholder="you@example.com"
           />
         </div>
-        {errors.email && <p className="text-red-500">{errors.email}</p>}
+        {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
 
-        <div>
+        <div className="w-full">
           <label
             htmlFor="password"
-            className="block text-sm text-emerald-700 mb-1"
+            className="block text-sm text-gray-300 mb-1"
           >
-            Password
+            Mot de passe
           </label>
           <input
             type="password"
@@ -94,15 +95,15 @@ export const LoginForm = ({ handleClick }: loginFormProps) => {
             placeholder="••••••••"
           />
         </div>
-        {errors.password && <p className="text-red-500">{errors.password}</p>}
+        {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
 
         <button
-          className={button({ intent: "nature", size: "md" })}
+          className={button({ intent: "nature", size: "md", fullWidth: true })}
           type="submit"
         >
-          Submit
+          Se connecter
         </button>
-        {errors.form && <p className="text-red-500">{errors.form}</p>}
+        {errors.form && <p className="text-red-400 text-sm">{errors.form}</p>}
       </form>
     </div>
   );

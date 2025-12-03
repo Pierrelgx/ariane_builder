@@ -66,17 +66,18 @@ export const RegisterForm = ({ handleClick }: registerFormProps) => {
 
   return (
     <div
-      className="fixed h-full w-full flex items-center justify-center backdrop-blur-sm bg-white/10 p-6"
+      className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/50 p-6"
       onClick={handleClick}
     >
       <form
-        className="flex flex-col items-center space-y-4 bg-white p-6 rounded-xl shadow-lg w-full max-w-md mx-auto"
+        className="flex flex-col items-center space-y-4 bg-dark-200 p-6 rounded-xl shadow-lg w-full max-w-md mx-auto border border-dark-400"
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
       >
-        <div>
-          <label htmlFor="name" className="block text-sm text-emerald-700 mb-1">
-            Name
+        <h2 className="text-xl font-bold text-white mb-2">Inscription</h2>
+        <div className="w-full">
+          <label htmlFor="name" className="block text-sm text-gray-300 mb-1">
+            Nom
           </label>
           <input
             type="text"
@@ -87,12 +88,12 @@ export const RegisterForm = ({ handleClick }: registerFormProps) => {
             required
           />
         </div>
-        {errors.name && <p className="text-red-500">{errors.name}</p>}
+        {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
 
-        <div>
+        <div className="w-full">
           <label
             htmlFor="email"
-            className="block text-sm text-emerald-700 mb-1"
+            className="block text-sm text-gray-300 mb-1"
           >
             Email
           </label>
@@ -106,14 +107,14 @@ export const RegisterForm = ({ handleClick }: registerFormProps) => {
             required
           />
         </div>
-        {errors.email && <p className="text-red-500">{errors.email}</p>}
+        {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
 
-        <div>
+        <div className="w-full">
           <label
             htmlFor="password"
-            className="block text-sm text-emerald-700 mb-1"
+            className="block text-sm text-gray-300 mb-1"
           >
-            Password
+            Mot de passe
           </label>
           <input
             type="password"
@@ -125,14 +126,14 @@ export const RegisterForm = ({ handleClick }: registerFormProps) => {
             required
           />
         </div>
-        {errors.password && <p className="text-red-500">{errors.password}</p>}
+        {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
 
-        <div>
+        <div className="w-full">
           <label
             htmlFor="confirmPassword"
-            className="block text-sm text-emerald-700 mb-1"
+            className="block text-sm text-gray-300 mb-1"
           >
-            Confirm Password
+            Confirmer le mot de passe
           </label>
           <input
             type="password"
@@ -145,14 +146,14 @@ export const RegisterForm = ({ handleClick }: registerFormProps) => {
           />
         </div>
         {errors.confirmPassword && (
-          <p className="text-red-500">{errors.confirmPassword}</p>
+          <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
         )}
 
         <button
-          className={button({ intent: "nature", size: "md" })}
+          className={button({ intent: "nature", size: "md", fullWidth: true })}
           type="submit"
         >
-          Submit
+          S'inscrire
         </button>
       </form>
     </div>

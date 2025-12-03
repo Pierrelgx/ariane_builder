@@ -9,6 +9,7 @@ interface CreateEventInput {
   positionX?: number;
   positionY?: number;
   authorId: string;
+  projectId?: string;
 }
 
 interface UpdateEventInput {
@@ -63,6 +64,7 @@ export async function createEvent(input: CreateEventInput) {
       positionX: sanitized.positionX ?? 0,
       positionY: sanitized.positionY ?? 0,
       authorId: input.authorId,
+      projectId: input.projectId,
     },
     include: {
       nexts: {
@@ -84,10 +86,11 @@ export async function createEvent(input: CreateEventInput) {
   return event;
 }
 
-export async function getEventsByAuthor(authorId: string) {
+export async function getEventsByAuthor(authorId: string, projectId?: string) {
   const events = await prisma.event.findMany({
     where: {
       authorId,
+      ...(projectId && { projectId }),
     },
     include: {
       nexts: {

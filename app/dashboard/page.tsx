@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import TimelineCanvas from "@components/timeline/TimelineCanvas";
 import EventFormModal from "@components/timeline/EventFormModal";
+import ProfileDropdown from "@components/profile/ProfileDropdown";
+import ProjectSelector from "@components/projects/ProjectSelector";
 
 interface Event {
   id: string;
@@ -13,6 +15,7 @@ interface Event {
   date?: string | null;
   positionX: number;
   positionY: number;
+  projectId?: string | null;
   nexts?: Array<{
     id: string;
     nextId: string | null;
@@ -21,10 +24,20 @@ interface Event {
   }>;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  _count?: {
+    events: number;
+  };
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [events, setEvents] = useState<Event[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -33,6 +46,8 @@ export default function DashboardPage() {
     y: number;
   } | null>(null);
   const [importing, setImporting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -40,6 +55,65 @@ export default function DashboardPage() {
       router.push("/");
     }
   }, [status, router]);
+
+  // Fetch projects
+  const fetchProjects = useCallback(async () => {
+    try {
+      const response = await fetch("/api/projects");
+      if (!response.ok) throw new Error("Failed to fetch projects");
+
+      const data = await response.json();
+      setProjects(data.projects);
+
+      // Select first project if none selected
+      if (data.projects.length > 0 && !currentProject) {
+        setCurrentProject(data.projects[0]);
+      }
+
+      return data.projects;
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      return [];
+    }
+  }, [currentProject]);
+
+  // Fetch events for current project
+  const fetchEvents = useCallback(async (projectId?: string) => {
+    try {
+      const url = projectId
+        ? `/api/events?projectId=${projectId}`
+        : "/api/events";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Failed to fetch events");
+
+      const data = await response.json();
+      setEvents(data.events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Initial load: fetch projects then events
+  useEffect(() => {
+    if (status === "authenticated" && !importing) {
+      fetchProjects().then((loadedProjects) => {
+        if (loadedProjects.length > 0) {
+          fetchEvents(loadedProjects[0].id);
+        } else {
+          setIsLoading(false);
+        }
+      });
+    }
+  }, [status, importing]);
+
+  // Fetch events when project changes
+  useEffect(() => {
+    if (currentProject) {
+      fetchEvents(currentProject.id);
+    }
+  }, [currentProject?.id]);
 
   // Import local data if requested
   useEffect(() => {
@@ -59,7 +133,18 @@ export default function DashboardPage() {
         const parsed = JSON.parse(localData);
         const localEvents = parsed.events || [];
 
-        // Save each event to the server
+        // Create a new project for imported data
+        const projectResponse = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: "Timeline importée" }),
+        });
+
+        if (!projectResponse.ok) throw new Error("Failed to create project");
+        const projectData = await projectResponse.json();
+        const newProject = projectData.project;
+
+        // Save each event to the new project
         for (const event of localEvents) {
           await fetch("/api/events", {
             method: "POST",
@@ -70,6 +155,7 @@ export default function DashboardPage() {
               date: event.date,
               positionX: event.positionX,
               positionY: event.positionY,
+              projectId: newProject.id,
             }),
           });
         }
@@ -77,41 +163,54 @@ export default function DashboardPage() {
         // Clear local storage
         localStorage.removeItem("ariane-timeline-guest");
 
-        // Reload events
-        await fetchEvents();
+        // Reload projects and select the new one
+        await fetchProjects();
+        setCurrentProject(newProject);
 
-        alert("✅ Timeline importée avec succès !");
+        alert("Timeline importée avec succès !");
       }
     } catch (error) {
       console.error("Error importing local data:", error);
-      alert("❌ Erreur lors de l'import de la timeline");
+      alert("Erreur lors de l'import de la timeline");
     } finally {
       setImporting(false);
-      // Remove import param from URL
       router.replace("/dashboard");
     }
   };
 
-  // Fetch events
-  const fetchEvents = useCallback(async () => {
-    try {
-      const response = await fetch("/api/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
+  // Handle project selection
+  const handleSelectProject = (project: Project) => {
+    setCurrentProject(project);
+  };
 
-      const data = await response.json();
-      setEvents(data.events);
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  // Handle project creation
+  const handleCreateProject = (project: Project) => {
+    setProjects((prev) => [project, ...prev]);
+  };
 
-  useEffect(() => {
-    if (status === "authenticated" && !importing) {
-      fetchEvents();
+  // Handle project rename
+  const handleRenameProject = (updatedProject: Project) => {
+    setProjects((prev) =>
+      prev.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+    );
+    if (currentProject?.id === updatedProject.id) {
+      setCurrentProject(updatedProject);
     }
-  }, [status, importing, fetchEvents]);
+  };
+
+  // Handle project deletion
+  const handleDeleteProject = (projectId: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== projectId));
+    if (currentProject?.id === projectId) {
+      const remaining = projects.filter((p) => p.id !== projectId);
+      setCurrentProject(remaining.length > 0 ? remaining[0] : null);
+      if (remaining.length > 0) {
+        fetchEvents(remaining[0].id);
+      } else {
+        setEvents([]);
+      }
+    }
+  };
 
   // Handle event creation
   const handleEventCreate = useCallback((position: { x: number; y: number }) => {
@@ -181,14 +280,15 @@ export default function DashboardPage() {
 
         if (!response.ok) throw new Error("Failed to create connection");
 
-        // Refresh events to get updated connections
-        await fetchEvents();
+        if (currentProject) {
+          await fetchEvents(currentProject.id);
+        }
       } catch (error) {
         console.error("Error creating connection:", error);
         alert("Erreur lors de la création de la connexion");
       }
     },
-    [fetchEvents]
+    [currentProject, fetchEvents]
   );
 
   // Handle connection deletion
@@ -203,13 +303,41 @@ export default function DashboardPage() {
 
         if (!response.ok) throw new Error("Failed to delete connection");
 
-        await fetchEvents();
+        if (currentProject) {
+          await fetchEvents(currentProject.id);
+        }
       } catch (error) {
         console.error("Error deleting connection:", error);
       }
     },
-    [fetchEvents]
+    [currentProject, fetchEvents]
   );
+
+  // Handle save all events (positions)
+  const handleSaveAll = async () => {
+    setSaving(true);
+    setSaveMessage(null);
+    try {
+      for (const event of events) {
+        await fetch(`/api/events/${event.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            positionX: event.positionX,
+            positionY: event.positionY,
+          }),
+        });
+      }
+      setSaveMessage("Sauvegardé !");
+      setTimeout(() => setSaveMessage(null), 2000);
+    } catch (error) {
+      console.error("Error saving:", error);
+      setSaveMessage("Erreur lors de la sauvegarde");
+      setTimeout(() => setSaveMessage(null), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // Handle form save
   const handleFormSave = async (data: {
@@ -228,7 +356,9 @@ export default function DashboardPage() {
 
         if (!response.ok) throw new Error("Failed to update event");
 
-        await fetchEvents();
+        if (currentProject) {
+          await fetchEvents(currentProject.id);
+        }
       } else {
         // Create new event
         const response = await fetch("/api/events", {
@@ -238,12 +368,23 @@ export default function DashboardPage() {
             ...data,
             positionX: pendingPosition?.x || 0,
             positionY: pendingPosition?.y || 0,
+            projectId: currentProject?.id,
           }),
         });
 
         if (!response.ok) throw new Error("Failed to create event");
 
-        await fetchEvents();
+        if (currentProject) {
+          await fetchEvents(currentProject.id);
+          // Update project count
+          setProjects((prev) =>
+            prev.map((p) =>
+              p.id === currentProject.id
+                ? { ...p, _count: { events: (p._count?.events || 0) + 1 } }
+                : p
+            )
+          );
+        }
       }
     } catch (error) {
       console.error("Error saving event:", error);
@@ -253,8 +394,8 @@ export default function DashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl">Chargement...</div>
+      <div className="flex items-center justify-center h-screen bg-dark">
+        <div className="text-xl text-gray-300">Chargement...</div>
       </div>
     );
   }
@@ -264,46 +405,85 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col">
-      <header className="bg-white shadow-sm border-b px-6 py-4">
+    <div className="h-screen flex flex-col bg-dark">
+      <header className="bg-dark-100 shadow-lg border-b border-dark-400 px-6 py-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Ariane World Builder
-            </h1>
-            <p className="text-sm text-gray-600">
-              Créez votre timeline avec des branches narratives et des voyages dans le
-              temps
-            </p>
+          <div className="flex items-center gap-6">
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                Ariane World Builder
+              </h1>
+              <p className="text-sm text-gray-400">
+                Créez votre timeline avec des branches narratives
+              </p>
+            </div>
+            <ProjectSelector
+              projects={projects}
+              currentProject={currentProject}
+              onSelectProject={handleSelectProject}
+              onCreateProject={handleCreateProject}
+              onRenameProject={handleRenameProject}
+              onDeleteProject={handleDeleteProject}
+            />
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {session?.user?.email}
-            </span>
+            {saveMessage && (
+              <span className={`text-sm ${saveMessage.includes("Erreur") ? "text-red-400" : "text-green-400"}`}>
+                {saveMessage}
+              </span>
+            )}
+            <button
+              onClick={handleSaveAll}
+              disabled={saving || events.length === 0}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Sauvegarde..." : "Sauvegarder"}
+            </button>
             <button
               onClick={() => {
-                setPendingPosition({ x: 100, y: 100 });
+                if (!currentProject) {
+                  alert("Veuillez d'abord créer ou sélectionner un projet");
+                  return;
+                }
+                // Décaler la position en fonction du nombre d'events existants
+                const offset = events.length * 50;
+                setPendingPosition({ x: 100 + offset, y: 100 + (offset % 200) });
                 setSelectedEvent(null);
                 setIsModalOpen(true);
               }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              disabled={!currentProject}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               + Nouvel événement
             </button>
+            {session && <ProfileDropdown session={session} />}
           </div>
         </div>
       </header>
 
-      <main className="flex-1 bg-gray-50">
-        <TimelineCanvas
-          events={events}
-          onEventCreate={handleEventCreate}
-          onEventUpdate={handleEventUpdate}
-          onEventEdit={handleEventEdit}
-          onEventDelete={handleEventDelete}
-          onConnectionCreate={handleConnectionCreate}
-          onConnectionDelete={handleConnectionDelete}
-        />
+      <main className="flex-1 bg-dark-50">
+        {!currentProject ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <h2 className="text-xl font-medium text-gray-300 mb-2">
+                Aucun projet sélectionné
+              </h2>
+              <p className="text-gray-500">
+                Créez un nouveau projet pour commencer
+              </p>
+            </div>
+          </div>
+        ) : (
+          <TimelineCanvas
+            events={events}
+            onEventCreate={handleEventCreate}
+            onEventUpdate={handleEventUpdate}
+            onEventEdit={handleEventEdit}
+            onEventDelete={handleEventDelete}
+            onConnectionCreate={handleConnectionCreate}
+            onConnectionDelete={handleConnectionDelete}
+          />
+        )}
       </main>
 
       <EventFormModal

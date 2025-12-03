@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ariane World Builder - Documentation</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --bg-dark: #1a1a2e;
+      --bg-sidebar: #16213e;
+      --bg-content: #f8fafc;
+      --text-light: #e2e8f0;
+      --text-dark: #1e293b;
+      --border: #334155;
+      --code-bg: #0f172a;
+      --highlight: #fef08a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg-content);
+      color: var(--text-dark);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--bg-sidebar);
+      color: var(--text-light);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-dark);
+    }
+
+    .sidebar-header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .sidebar-header p {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* Search */
+    .search-container {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .search-input::placeholder {
+      color: #64748b;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Navigation */
+    .nav-section {
+      padding: 12px 0;
+    }
+
+    .nav-title {
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 10px 20px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-left-color: var(--primary);
+    }
+
+    .nav-item.active {
+      background: rgba(16, 185, 129, 0.1);
+      border-left-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .nav-item.sub {
+      padding-left: 36px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      margin-left: 280px;
+      min-height: 100vh;
+    }
+
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 32px 0 16px;
+    }
+
+    h4 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 24px 0 12px;
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: #475569;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--code-bg);
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    code {
+      background: #e2e8f0;
+      color: #be185d;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .card-path {
+      font-size: 12px;
+      color: var(--primary);
+      font-family: monospace;
+      margin-bottom: 12px;
+    }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .tag-get { background: #dbeafe; color: #1d4ed8; }
+    .tag-post { background: #dcfce7; color: #15803d; }
+    .tag-put { background: #fef3c7; color: #b45309; }
+    .tag-delete { background: #fee2e2; color: #dc2626; }
+    .tag-auth { background: #f3e8ff; color: #7c3aed; }
+    .tag-public { background: #e0f2fe; color: #0369a1; }
+
+    /* Diagrams */
+    .diagram {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 24px;
+      margin: 16px 0;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+      color: #475569;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 16px 0;
+      border-left: 4px solid;
+    }
+
+    .alert-info {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1e40af;
+    }
+
+    .alert-warning {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+
+    .alert-success {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    /* Search highlight */
+    .highlight {
+      background: var(--highlight);
+      padding: 2px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+
+    /* Syntax Highlighting */
+    .keyword { color: #c678dd; }
+    .string { color: #98c379; }
+    .number { color: #d19a66; }
+    .comment { color: #5c6370; font-style: italic; }
+    .function { color: #61afef; }
+    .type { color: #e5c07b; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>Ariane World Builder</h1>
+      <p>Documentation Technique v1.0</p>
+    </div>
+
+    <div class="search-container">
+      <input type="text" class="search-input" id="search" placeholder="Rechercher..." />
+    </div>
+
+    <nav class="nav-section">
+      <div class="nav-title">Introduction</div>
+      <a href="#overview" class="nav-item active" data-section="overview">Vue d'ensemble</a>
+      <a href="#architecture" class="nav-item" data-section="architecture">Architecture</a>
+      <a href="#tech-stack" class="nav-item" data-section="tech-stack">Stack Technique</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">Base de Donnees</div>
+      <a href="#database" class="nav-item" data-section="database">Schema Prisma</a>
+      <a href="#models" class="nav-item" data-section="models">Modeles</a>
+      <a href="#relations" class="nav-item" data-section="relations">Relations</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">API</div>
+      <a href="#api-auth" class="nav-item" data-section="api-auth">Authentification</a>
+      <a href="#api-projects" class="nav-item" data-section="api-projects">Projets</a>
+      <a href="#api-events" class="nav-item" data-section="api-events">Evenements</a>
+      <a href="#api-users" class="nav-item" data-section="api-users">Utilisateurs</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">Services</div>
+      <a href="#service-user" class="nav-item" data-section="service-user">UserService</a>
+      <a href="#service-project" class="nav-item" data-section="service-project">ProjectService</a>
+      <a href="#service-event" class="nav-item" data-section="service-event">EventService</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">Composants</div>
+      <a href="#comp-forms" class="nav-item" data-section="comp-forms">Formulaires</a>
+      <a href="#comp-profile" class="nav-item" data-section="comp-profile">Profil</a>
+      <a href="#comp-projects" class="nav-item" data-section="comp-projects">Projets</a>
+      <a href="#comp-timeline" class="nav-item" data-section="comp-timeline">Timeline</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">Utilitaires</div>
+      <a href="#schemas" class="nav-item" data-section="schemas">Schemas Zod</a>
+      <a href="#utils" class="nav-item" data-section="utils">Helpers</a>
+      <a href="#styling" class="nav-item" data-section="styling">Styling (TV)</a>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">Securite</div>
+      <a href="#auth-flow" class="nav-item" data-section="auth-flow">Flux Auth</a>
+      <a href="#middleware" class="nav-item" data-section="middleware">Middleware</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="content">
+
+      <!-- Overview -->
+      <div id="overview" class="section active">
+        <h2>Vue d'ensemble</h2>
+        <p>
+          <strong>Ariane World Builder</strong> est une application web permettant de creer des timelines interactives
+          avec des branches narratives et des voyages dans le temps. L'application supporte un mode invite
+          (stockage local) et un mode authentifie (stockage en base de donnees).
+        </p>
+
+        <h3>Fonctionnalites principales</h3>
+        <div class="card">
+          <ul>
+            <li><strong>Edition de Timeline</strong> - Canvas interactif avec drag-and-drop</li>
+            <li><strong>Gestion de Projets</strong> - Organisation des timelines en projets</li>
+            <li><strong>Connexions temporelles</strong> - Liens lineaires ou voyages dans le temps</li>
+            <li><strong>Mode Invite</strong> - Utilisation sans compte (localStorage)</li>
+            <li><strong>Authentification</strong> - Inscription, connexion, gestion du profil</li>
+            <li><strong>Detection d'incoherences</strong> - Validation automatique de la logique temporelle</li>
+          </ul>
+        </div>
+
+        <h3>Structure du Projet</h3>
+        <pre>
+ariane-world-builder/
+├── app/                    # Next.js App Router
+│   ├── api/               # Routes API
+│   ├── dashboard/         # Page dashboard (authentifie)
+│   └── page.tsx           # Page d'accueil
+├── components/            # Composants React
+│   ├── forms/            # Formulaires (Login, Register)
+│   ├── profile/          # Gestion du profil
+│   ├── projects/         # Gestion des projets
+│   └── timeline/         # Canvas et evenements
+├── lib/                   # Logique metier
+│   ├── auth/             # Configuration NextAuth
+│   ├── db/               # Client Prisma
+│   ├── schemas/          # Validation Zod
+│   ├── services/         # Services metier
+│   └── utils/            # Utilitaires
+└── prisma/               # Schema et migrations
+        </pre>
+      </div>
+
+      <!-- Architecture -->
+      <div id="architecture" class="section">
+        <h2>Architecture</h2>
+        <p>L'application suit une architecture en couches classique avec separation claire des responsabilites.</p>
+
+        <h3>Flux de donnees</h3>
+        <div class="diagram">
+┌─────────────────────────────────────────────────────────────┐
+│                        CLIENT                                │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   Pages     │  │ Components  │  │   State (React)     │  │
+│  │  (App Dir)  │──│  (UI/UX)    │──│ useState/useEffect  │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+└────────────────────────────┬────────────────────────────────┘
+                             │ fetch()
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      API ROUTES                              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   Handler   │──│  Validation │──│   Error Handler     │  │
+│  │  (route.ts) │  │    (Zod)    │  │ (withErrorHandler)  │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       SERVICES                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │ userService │  │projectService│  │    eventService     │  │
+│  │             │  │             │  │                     │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    PRISMA ORM                                │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                    PostgreSQL                         │   │
+│  │  User │ Project │ Event │ EventConnection │ Session   │   │
+│  └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>Patterns utilises</h3>
+        <table>
+          <tr>
+            <th>Pattern</th>
+            <th>Implementation</th>
+            <th>Fichiers</th>
+          </tr>
+          <tr>
+            <td>Service Layer</td>
+            <td>Separation logique metier / API</td>
+            <td><code>lib/services/*</code></td>
+          </tr>
+          <tr>
+            <td>Repository</td>
+            <td>Abstraction Prisma dans les services</td>
+            <td><code>lib/services/*</code></td>
+          </tr>
+          <tr>
+            <td>Middleware</td>
+            <td>Rate limiting, auth checks</td>
+            <td><code>middleware.ts</code></td>
+          </tr>
+          <tr>
+            <td>HOC</td>
+            <td>Error handler wrapper</td>
+            <td><code>withErrorHandler.ts</code></td>
+          </tr>
+          <tr>
+            <td>Compound Component</td>
+            <td>Modals avec portals</td>
+            <td><code>components/*Modal.tsx</code></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Tech Stack -->
+      <div id="tech-stack" class="section">
+        <h2>Stack Technique</h2>
+
+        <h3>Framework & Runtime</h3>
+        <table>
+          <tr>
+            <th>Technologie</th>
+            <th>Version</th>
+            <th>Role</th>
+          </tr>
+          <tr>
+            <td><strong>Next.js</strong></td>
+            <td>14.2.5</td>
+            <td>Framework React full-stack avec App Router</td>
+          </tr>
+          <tr>
+            <td><strong>React</strong></td>
+            <td>19</td>
+            <td>Bibliotheque UI</td>
+          </tr>
+          <tr>
+            <td><strong>TypeScript</strong></td>
+            <td>5.8</td>
+            <td>Typage statique</td>
+          </tr>
+        </table>
+
+        <h3>Base de donnees</h3>
+        <table>
+          <tr>
+            <th>Technologie</th>
+            <th>Version</th>
+            <th>Role</th>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>-</td>
+            <td>Base de donnees relationnelle</td>
+          </tr>
+          <tr>
+            <td><strong>Prisma</strong></td>
+            <td>6.13</td>
+            <td>ORM TypeScript-first</td>
+          </tr>
+        </table>
+
+        <h3>Authentification</h3>
+        <table>
+          <tr>
+            <th>Technologie</th>
+            <th>Version</th>
+            <th>Role</th>
+          </tr>
+          <tr>
+            <td><strong>NextAuth.js</strong></td>
+            <td>4.24.7</td>
+            <td>Gestion authentification</td>
+          </tr>
+          <tr>
+            <td><strong>bcryptjs</strong></td>
+            <td>3.0.2</td>
+            <td>Hashage mots de passe</td>
+          </tr>
+        </table>
+
+        <h3>Validation & Securite</h3>
+        <table>
+          <tr>
+            <th>Technologie</th>
+            <th>Version</th>
+            <th>Role</th>
+          </tr>
+          <tr>
+            <td><strong>Zod</strong></td>
+            <td>4.0.5</td>
+            <td>Validation de schemas TypeScript</td>
+          </tr>
+          <tr>
+            <td><strong>validator</strong></td>
+            <td>13.15</td>
+            <td>Sanitization des entrees</td>
+          </tr>
+          <tr>
+            <td><strong>@upstash/ratelimit</strong></td>
+            <td>2.0.6</td>
+            <td>Rate limiting Redis</td>
+          </tr>
+        </table>
+
+        <h3>UI & Styling</h3>
+        <table>
+          <tr>
+            <th>Technologie</th>
+            <th>Version</th>
+            <th>Role</th>
+          </tr>
+          <tr>
+            <td><strong>Tailwind CSS</strong></td>
+            <td>4.1.11</td>
+            <td>Framework CSS utility-first</td>
+          </tr>
+          <tr>
+            <td><strong>tailwind-variants</strong></td>
+            <td>1.0.0</td>
+            <td>Variants pour composants</td>
+          </tr>
+          <tr>
+            <td><strong>@xyflow/react</strong></td>
+            <td>12.8.6</td>
+            <td>Canvas interactif node-based</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Database -->
+      <div id="database" class="section">
+        <h2>Schema Prisma</h2>
+        <p>La base de donnees PostgreSQL est geree via Prisma ORM. Voici le schema complet :</p>
+
+        <pre>
+<span class="comment">// prisma/schema.prisma</span>
+
+<span class="keyword">datasource</span> db {
+  provider = <span class="string">"postgresql"</span>
+  url      = <span class="function">env</span>(<span class="string">"DATABASE_URL"</span>)
+}
+
+<span class="keyword">generator</span> client {
+  provider = <span class="string">"prisma-client-js"</span>
+}
+
+<span class="keyword">model</span> <span class="type">Project</span> {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  events Event[]
+}
+
+<span class="keyword">model</span> <span class="type">Event</span> {
+  id          String            @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime?
+  positionX   Float             @default(0)
+  positionY   Float             @default(0)
+  data        Json?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  nexts       EventConnection[] @relation("prevEvent")
+  prevs       EventConnection[] @relation("nextEvent")
+
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+}
+
+<span class="keyword">enum</span> <span class="type">ConnectionType</span> {
+  LINEAR
+  TIMETRAVEL
+}
+
+<span class="keyword">model</span> <span class="type">EventConnection</span> {
+  id    String         @id @default(cuid())
+  order Int            @default(0)
+  type  ConnectionType @default(LINEAR)
+
+  next   Event?  @relation("nextEvent", fields: [nextId], references: [id])
+  prev   Event?  @relation("prevEvent", fields: [prevId], references: [id])
+  nextId String?
+  prevId String?
+
+  @@unique([nextId, prevId])
+  @@index([prevId, order])
+}
+
+<span class="keyword">model</span> <span class="type">User</span> {
+  id            String          @id @default(cuid())
+  name          String?
+  password      String
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Event     Event[]
+  projects  Project[]
+}
+        </pre>
+      </div>
+
+      <!-- Models -->
+      <div id="models" class="section">
+        <h2>Modeles de Donnees</h2>
+
+        <div class="card">
+          <div class="card-title">User</div>
+          <p>Represente un utilisateur de l'application.</p>
+          <table>
+            <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+            <tr><td>id</td><td>String (CUID)</td><td>Identifiant unique</td></tr>
+            <tr><td>name</td><td>String?</td><td>Nom d'affichage</td></tr>
+            <tr><td>email</td><td>String (unique)</td><td>Email de connexion</td></tr>
+            <tr><td>password</td><td>String</td><td>Hash bcrypt du mot de passe</td></tr>
+            <tr><td>image</td><td>String?</td><td>URL de l'avatar</td></tr>
+            <tr><td>emailVerified</td><td>DateTime?</td><td>Date de verification email</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Project</div>
+          <p>Conteneur pour organiser les evenements en timelines distinctes.</p>
+          <table>
+            <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+            <tr><td>id</td><td>String (CUID)</td><td>Identifiant unique</td></tr>
+            <tr><td>name</td><td>String</td><td>Nom du projet (1-100 chars)</td></tr>
+            <tr><td>userId</td><td>String (FK)</td><td>Proprietaire du projet</td></tr>
+            <tr><td>createdAt</td><td>DateTime</td><td>Date de creation</td></tr>
+            <tr><td>updatedAt</td><td>DateTime</td><td>Derniere modification</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Event</div>
+          <p>Un evenement dans la timeline, positionnable sur le canvas.</p>
+          <table>
+            <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+            <tr><td>id</td><td>String (CUID)</td><td>Identifiant unique</td></tr>
+            <tr><td>title</td><td>String</td><td>Titre de l'evenement (1-200 chars)</td></tr>
+            <tr><td>description</td><td>String?</td><td>Description (max 2000 chars)</td></tr>
+            <tr><td>date</td><td>DateTime?</td><td>Date de l'evenement</td></tr>
+            <tr><td>positionX</td><td>Float</td><td>Position X sur le canvas</td></tr>
+            <tr><td>positionY</td><td>Float</td><td>Position Y sur le canvas</td></tr>
+            <tr><td>authorId</td><td>String (FK)</td><td>Auteur de l'evenement</td></tr>
+            <tr><td>projectId</td><td>String? (FK)</td><td>Projet parent</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">EventConnection</div>
+          <p>Connexion entre deux evenements (lineaire ou voyage dans le temps).</p>
+          <table>
+            <tr><th>Champ</th><th>Type</th><th>Description</th></tr>
+            <tr><td>id</td><td>String (CUID)</td><td>Identifiant unique</td></tr>
+            <tr><td>type</td><td>ConnectionType</td><td>LINEAR ou TIMETRAVEL</td></tr>
+            <tr><td>order</td><td>Int</td><td>Ordre dans la sequence</td></tr>
+            <tr><td>prevId</td><td>String? (FK)</td><td>Evenement source</td></tr>
+            <tr><td>nextId</td><td>String? (FK)</td><td>Evenement cible</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Relations -->
+      <div id="relations" class="section">
+        <h2>Relations entre Modeles</h2>
+
+        <div class="diagram">
+┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+│     User     │       │   Project    │       │    Event     │
+├──────────────┤       ├──────────────┤       ├──────────────┤
+│ id (PK)      │───┐   │ id (PK)      │───┐   │ id (PK)      │
+│ email        │   │   │ name         │   │   │ title        │
+│ password     │   │   │ userId (FK)  │◄──┘   │ description  │
+│ name         │   │   │ createdAt    │       │ date         │
+└──────────────┘   │   └──────────────┘       │ authorId (FK)│◄─┐
+       │           │          │               │ projectId(FK)│◄─┼─┐
+       │           │          │               └──────────────┘  │ │
+       │           │          │                      │          │ │
+       │           │          └──────────────────────┼──────────┘ │
+       │           └─────────────────────────────────┼────────────┘
+       │                                             │
+       └─────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────┐
+│                     EventConnection                             │
+├────────────────────────────────────────────────────────────────┤
+│  prevId (FK) ──────► Event (source)                            │
+│  nextId (FK) ──────► Event (target)                            │
+│  type: LINEAR | TIMETRAVEL                                      │
+└────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <h3>Cascades de Suppression</h3>
+        <div class="alert alert-warning">
+          <strong>Attention :</strong> Les suppressions sont en cascade :
+          <ul>
+            <li>Supprimer un <strong>User</strong> supprime tous ses Projects et Events</li>
+            <li>Supprimer un <strong>Project</strong> supprime tous ses Events</li>
+            <li>Supprimer un <strong>Event</strong> supprime toutes ses Connections</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- API Auth -->
+      <div id="api-auth" class="section">
+        <h2>API - Authentification</h2>
+
+        <div class="card">
+          <div class="card-title">POST /api/register</div>
+          <div class="card-path">app/api/register/route.ts</div>
+          <span class="tag tag-post">POST</span>
+          <span class="tag tag-public">Public</span>
+          <p>Inscription d'un nouvel utilisateur.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "name": "John Doe",        <span class="comment">// optionnel</span>
+  "email": "john@example.com",
+  "password": "secret123",   <span class="comment">// min 6 caracteres</span>
+  "confirmPassword": "secret123"
+}
+          </pre>
+
+          <h4>Response (201)</h4>
+          <pre>
+{
+  "message": "User created",
+  "userId": "clx1234..."
+}
+          </pre>
+
+          <h4>Erreurs</h4>
+          <table>
+            <tr><th>Code</th><th>Description</th></tr>
+            <tr><td>400</td><td>Validation Zod echouee</td></tr>
+            <tr><td>409</td><td>Email deja utilise</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">POST /api/auth/[...nextauth]</div>
+          <div class="card-path">app/api/auth/[...nextauth]/route.ts</div>
+          <span class="tag tag-post">POST</span>
+          <span class="tag tag-public">Public</span>
+          <p>Endpoint NextAuth pour la connexion (CredentialsProvider).</p>
+
+          <h4>Credentials</h4>
+          <pre>
+{
+  "email": "john@example.com",
+  "password": "secret123"
+}
+          </pre>
+
+          <h4>Processus</h4>
+          <ol>
+            <li>Validation avec <code>loginSchema</code></li>
+            <li>Recherche user par email</li>
+            <li>Verification bcrypt du mot de passe</li>
+            <li>Creation token JWT</li>
+            <li>Retour session</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- API Projects -->
+      <div id="api-projects" class="section">
+        <h2>API - Projets</h2>
+
+        <div class="card">
+          <div class="card-title">GET /api/projects</div>
+          <div class="card-path">app/api/projects/route.ts</div>
+          <span class="tag tag-get">GET</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Liste tous les projets de l'utilisateur connecte.</p>
+
+          <h4>Response (200)</h4>
+          <pre>
+{
+  "projects": [
+    {
+      "id": "clx1234...",
+      "name": "Ma Timeline",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-16T14:20:00Z",
+      "_count": { "events": 5 }
+    }
+  ]
+}
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">POST /api/projects</div>
+          <div class="card-path">app/api/projects/route.ts</div>
+          <span class="tag tag-post">POST</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Cree un nouveau projet.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "name": "Mon nouveau projet"  <span class="comment">// 1-100 caracteres</span>
+}
+          </pre>
+
+          <h4>Response (201)</h4>
+          <pre>
+{
+  "project": {
+    "id": "clx5678...",
+    "name": "Mon nouveau projet",
+    ...
+  }
+}
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">PUT /api/projects/[id]</div>
+          <div class="card-path">app/api/projects/[id]/route.ts</div>
+          <span class="tag tag-put">PUT</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Renomme un projet existant.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "name": "Nouveau nom"
+}
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">DELETE /api/projects/[id]</div>
+          <div class="card-path">app/api/projects/[id]/route.ts</div>
+          <span class="tag tag-delete">DELETE</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Supprime un projet et tous ses evenements (cascade).</p>
+        </div>
+      </div>
+
+      <!-- API Events -->
+      <div id="api-events" class="section">
+        <h2>API - Evenements</h2>
+
+        <div class="card">
+          <div class="card-title">GET /api/events</div>
+          <div class="card-path">app/api/events/route.ts</div>
+          <span class="tag tag-get">GET</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Liste les evenements, filtrable par projet.</p>
+
+          <h4>Query Parameters</h4>
+          <table>
+            <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+            <tr><td>projectId</td><td>string?</td><td>Filtre par projet</td></tr>
+          </table>
+
+          <h4>Response (200)</h4>
+          <pre>
+{
+  "events": [
+    {
+      "id": "clx...",
+      "title": "Evenement 1",
+      "description": "Description...",
+      "date": "2024-01-15T10:00:00Z",
+      "positionX": 100,
+      "positionY": 150,
+      "nexts": [
+        { "id": "...", "nextId": "...", "type": "LINEAR", "order": 0 }
+      ],
+      "prevs": []
+    }
+  ]
+}
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">POST /api/events</div>
+          <div class="card-path">app/api/events/route.ts</div>
+          <span class="tag tag-post">POST</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Cree un nouvel evenement.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "title": "Mon evenement",      <span class="comment">// requis, 1-200 chars</span>
+  "description": "Details...",   <span class="comment">// optionnel, max 2000</span>
+  "date": "2024-01-15T10:00",    <span class="comment">// optionnel</span>
+  "positionX": 100,              <span class="comment">// default 0</span>
+  "positionY": 150,              <span class="comment">// default 0</span>
+  "projectId": "clx..."          <span class="comment">// optionnel</span>
+}
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">POST /api/events/[id]/connect</div>
+          <div class="card-path">app/api/events/[id]/connect/route.ts</div>
+          <span class="tag tag-post">POST</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Cree une connexion entre deux evenements.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "targetEventId": "clx...",
+  "connectionType": "LINEAR",  <span class="comment">// ou "TIMETRAVEL"</span>
+  "order": 0
+}
+          </pre>
+
+          <div class="alert alert-info">
+            <strong>Types de connexion :</strong>
+            <ul>
+              <li><strong>LINEAR</strong> - Progression chronologique normale</li>
+              <li><strong>TIMETRAVEL</strong> - Retour dans le temps / branche alternative</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Users -->
+      <div id="api-users" class="section">
+        <h2>API - Utilisateurs</h2>
+
+        <div class="card">
+          <div class="card-title">PUT /api/users/me/password</div>
+          <div class="card-path">app/api/users/me/password/route.ts</div>
+          <span class="tag tag-put">PUT</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Change le mot de passe de l'utilisateur connecte.</p>
+
+          <h4>Request Body</h4>
+          <pre>
+{
+  "currentPassword": "oldpass123",
+  "newPassword": "newpass456",
+  "confirmNewPassword": "newpass456"
+}
+          </pre>
+
+          <h4>Processus</h4>
+          <ol>
+            <li>Verification du mot de passe actuel (bcrypt.compare)</li>
+            <li>Validation nouveau mot de passe (min 6 chars)</li>
+            <li>Verification confirmation</li>
+            <li>Hash du nouveau mot de passe</li>
+            <li>Mise a jour en base</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <div class="card-title">DELETE /api/users/me</div>
+          <div class="card-path">app/api/users/me/route.ts</div>
+          <span class="tag tag-delete">DELETE</span>
+          <span class="tag tag-auth">Auth Required</span>
+          <p>Supprime le compte de l'utilisateur connecte.</p>
+
+          <div class="alert alert-warning">
+            <strong>Cascade :</strong> Supprime egalement tous les projets et evenements de l'utilisateur.
+          </div>
+        </div>
+      </div>
+
+      <!-- Service User -->
+      <div id="service-user" class="section">
+        <h2>UserService</h2>
+        <div class="card-path">lib/services/userService.ts</div>
+
+        <p>Service responsable de la gestion des utilisateurs.</p>
+
+        <div class="card">
+          <div class="card-title">registerUser(input)</div>
+          <p>Inscription d'un nouvel utilisateur avec hashage du mot de passe.</p>
+
+          <h4>Parametres</h4>
+          <pre>
+{
+  name?: string,
+  email: string,
+  password: string,
+  image?: string
+}
+          </pre>
+
+          <h4>Processus</h4>
+          <ol>
+            <li>Sanitization: <code>validator.escape()</code>, <code>validator.normalizeEmail()</code></li>
+            <li>Verification unicite email</li>
+            <li>Hashage: <code>bcrypt.hash(password, 10)</code></li>
+            <li>Creation en base via Prisma</li>
+          </ol>
+
+          <h4>Retour</h4>
+          <pre>Promise&lt;string&gt;  <span class="comment">// userId</span></pre>
+
+          <h4>Erreurs</h4>
+          <ul>
+            <li><code>UserAlreadyExistsError</code> si email existe</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Service Project -->
+      <div id="service-project" class="section">
+        <h2>ProjectService</h2>
+        <div class="card-path">lib/services/projectService.ts</div>
+
+        <p>Service CRUD pour la gestion des projets.</p>
+
+        <div class="card">
+          <div class="card-title">Fonctions disponibles</div>
+          <table>
+            <tr><th>Fonction</th><th>Description</th><th>Retour</th></tr>
+            <tr>
+              <td><code>createProject(input)</code></td>
+              <td>Cree un nouveau projet</td>
+              <td>Project</td>
+            </tr>
+            <tr>
+              <td><code>getProjectsByUser(userId)</code></td>
+              <td>Liste projets d'un user</td>
+              <td>Project[]</td>
+            </tr>
+            <tr>
+              <td><code>getProjectById(id, userId)</code></td>
+              <td>Recupere un projet</td>
+              <td>Project | null</td>
+            </tr>
+            <tr>
+              <td><code>updateProject(id, userId, input)</code></td>
+              <td>Met a jour un projet</td>
+              <td>Project</td>
+            </tr>
+            <tr>
+              <td><code>deleteProject(id, userId)</code></td>
+              <td>Supprime un projet</td>
+              <td>{ success: true }</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="alert alert-info">
+          Toutes les fonctions verifient que le projet appartient bien a l'utilisateur (userId).
+        </div>
+      </div>
+
+      <!-- Service Event -->
+      <div id="service-event" class="section">
+        <h2>EventService</h2>
+        <div class="card-path">lib/services/eventService.ts</div>
+
+        <p>Service pour la gestion des evenements et leurs connexions.</p>
+
+        <div class="card">
+          <div class="card-title">Fonctions CRUD</div>
+          <table>
+            <tr><th>Fonction</th><th>Description</th></tr>
+            <tr>
+              <td><code>createEvent(input)</code></td>
+              <td>Cree un evenement avec sanitization</td>
+            </tr>
+            <tr>
+              <td><code>getEventsByAuthor(authorId, projectId?)</code></td>
+              <td>Liste evenements, filtrable par projet</td>
+            </tr>
+            <tr>
+              <td><code>getEventById(id, authorId)</code></td>
+              <td>Recupere un evenement avec connexions</td>
+            </tr>
+            <tr>
+              <td><code>updateEvent(id, authorId, input)</code></td>
+              <td>Met a jour un evenement</td>
+            </tr>
+            <tr>
+              <td><code>deleteEvent(id, authorId)</code></td>
+              <td>Supprime un evenement</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Fonctions de Connexion</div>
+          <table>
+            <tr><th>Fonction</th><th>Description</th></tr>
+            <tr>
+              <td><code>connectEvents(input)</code></td>
+              <td>Cree une connexion entre deux evenements</td>
+            </tr>
+            <tr>
+              <td><code>disconnectEvents(sourceId, targetId)</code></td>
+              <td>Supprime une connexion</td>
+            </tr>
+          </table>
+
+          <h4>Input connectEvents</h4>
+          <pre>
+{
+  sourceEventId: string,
+  targetEventId: string,
+  connectionType?: "LINEAR" | "TIMETRAVEL",
+  order?: number
+}
+          </pre>
+        </div>
+
+        <h4>Sanitization</h4>
+        <pre>
+<span class="keyword">function</span> <span class="function">sanitizeEventInput</span>(input) {
+  <span class="keyword">return</span> {
+    title: validator.<span class="function">escape</span>(validator.<span class="function">trim</span>(input.title)),
+    description: validator.<span class="function">escape</span>(validator.<span class="function">trim</span>(input.description)),
+    date: <span class="keyword">new</span> Date(input.date),
+    positionX: input.positionX,
+    positionY: input.positionY
+  };
+}
+        </pre>
+      </div>
+
+      <!-- Components Forms -->
+      <div id="comp-forms" class="section">
+        <h2>Composants - Formulaires</h2>
+
+        <div class="card">
+          <div class="card-title">LoginForm</div>
+          <div class="card-path">components/forms/LoginForm.tsx</div>
+          <p>Formulaire de connexion avec validation Zod.</p>
+
+          <h4>Props</h4>
+          <pre>
+{
+  handleClick: () => void  <span class="comment">// Callback fermeture</span>
+}
+          </pre>
+
+          <h4>Fonctionnement</h4>
+          <ul>
+            <li>Validation client avec <code>loginSchema</code></li>
+            <li>Appel <code>signIn("credentials", {...})</code></li>
+            <li>Gestion erreurs avec <code>parseSigninErrors</code></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">RegisterForm</div>
+          <div class="card-path">components/forms/RegisterForm.tsx</div>
+          <p>Formulaire d'inscription avec confirmation mot de passe.</p>
+
+          <h4>Props</h4>
+          <pre>
+{
+  handleClick: () => void
+}
+          </pre>
+
+          <h4>Champs</h4>
+          <ul>
+            <li><strong>name</strong> - Optionnel, min 2 caracteres</li>
+            <li><strong>email</strong> - Requis, format email valide</li>
+            <li><strong>password</strong> - Requis, min 6 caracteres</li>
+            <li><strong>confirmPassword</strong> - Doit matcher password</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Components Profile -->
+      <div id="comp-profile" class="section">
+        <h2>Composants - Profil</h2>
+
+        <div class="card">
+          <div class="card-title">ProfileDropdown</div>
+          <div class="card-path">components/profile/ProfileDropdown.tsx</div>
+          <p>Menu deroulant avec actions utilisateur.</p>
+
+          <h4>Props</h4>
+          <pre>
+{
+  session: Session  <span class="comment">// NextAuth session</span>
+}
+          </pre>
+
+          <h4>Actions</h4>
+          <ul>
+            <li>Mes sauvegardes → <code>/dashboard</code></li>
+            <li>Changer mot de passe → <code>ChangePasswordModal</code></li>
+            <li>Supprimer compte → <code>DeleteAccountModal</code></li>
+            <li>Deconnexion → <code>signOut()</code></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">ChangePasswordModal</div>
+          <div class="card-path">components/profile/ChangePasswordModal.tsx</div>
+          <p>Modal de changement de mot de passe.</p>
+
+          <h4>Validation</h4>
+          <ul>
+            <li>Mot de passe actuel verifie cote serveur</li>
+            <li>Nouveau mot de passe min 6 caracteres</li>
+            <li>Confirmation doit matcher</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">DeleteAccountModal</div>
+          <div class="card-path">components/profile/DeleteAccountModal.tsx</div>
+          <p>Modal de suppression de compte avec confirmation.</p>
+
+          <h4>Securite</h4>
+          <ul>
+            <li>L'utilisateur doit taper "SUPPRIMER" pour confirmer</li>
+            <li>Deconnexion automatique apres suppression</li>
+            <li>Redirection vers la page d'accueil</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Components Projects -->
+      <div id="comp-projects" class="section">
+        <h2>Composants - Projets</h2>
+
+        <div class="card">
+          <div class="card-title">ProjectSelector</div>
+          <div class="card-path">components/projects/ProjectSelector.tsx</div>
+          <p>Dropdown de selection et gestion des projets.</p>
+
+          <h4>Props</h4>
+          <pre>
+{
+  projects: Project[],
+  currentProject: Project | null,
+  onSelectProject: (project) => void,
+  onCreateProject: (project) => void,
+  onRenameProject: (project) => void,
+  onDeleteProject: (projectId) => void
+}
+          </pre>
+
+          <h4>Fonctionnalites</h4>
+          <ul>
+            <li>Affiche projet actuel avec compteur d'evenements</li>
+            <li>Liste tous les projets au clic</li>
+            <li>Bouton "Nouveau projet"</li>
+            <li>Actions hover: renommer / supprimer</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">CreateProjectModal / RenameProjectModal</div>
+          <div class="card-path">components/projects/</div>
+          <p>Modals pour creation et renommage de projets.</p>
+
+          <h4>Validation</h4>
+          <ul>
+            <li>Nom requis (1-100 caracteres)</li>
+            <li>Sanitization cote serveur</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Components Timeline -->
+      <div id="comp-timeline" class="section">
+        <h2>Composants - Timeline</h2>
+
+        <div class="card">
+          <div class="card-title">TimelineCanvas</div>
+          <div class="card-path">components/timeline/TimelineCanvas.tsx</div>
+          <p>Canvas interactif base sur ReactFlow pour l'edition de timeline.</p>
+
+          <h4>Props</h4>
+          <pre>
+{
+  events: TimelineEvent[],
+  onEventCreate: (position) => void,
+  onEventUpdate: (id, position) => void,
+  onEventDelete: (id) => void,
+  onEventEdit: (id) => void,
+  onConnectionCreate: (source, target, type) => void,
+  onConnectionDelete: (source, target) => void
+}
+          </pre>
+
+          <h4>Fonctionnalites</h4>
+          <ul>
+            <li>Drag & drop des noeuds</li>
+            <li>Creation de connexions par drag entre handles</li>
+            <li>Detection automatique du type (LINEAR/TIMETRAVEL) selon les dates</li>
+            <li>Suppression avec touche Delete</li>
+            <li>Mise en surbrillance des incoherences temporelles</li>
+          </ul>
+
+          <h4>Styles des connexions</h4>
+          <table>
+            <tr><th>Type</th><th>Style</th></tr>
+            <tr><td>LINEAR</td><td>Ligne bleue continue</td></tr>
+            <tr><td>TIMETRAVEL</td><td>Ligne violette animee</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">EventNode</div>
+          <div class="card-path">components/timeline/EventNode.tsx</div>
+          <p>Composant de noeud personnalise pour ReactFlow.</p>
+
+          <h4>Affichage</h4>
+          <ul>
+            <li>Titre de l'evenement</li>
+            <li>Description (tronquee a 2 lignes)</li>
+            <li>Date formatee (fr-FR)</li>
+            <li>Bordure rouge si incoherence detectee</li>
+            <li>Boutons edit/delete au hover</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">GuestTimelineManager</div>
+          <div class="card-path">components/timeline/GuestTimelineManager.tsx</div>
+          <p>Gestionnaire de timeline pour les utilisateurs non connectes.</p>
+
+          <h4>Stockage</h4>
+          <pre>
+localStorage.setItem(<span class="string">"ariane-timeline-guest"</span>, JSON.stringify({
+  events: [...],
+  lastSaved: <span class="keyword">new</span> Date().toISOString()
+}));
+          </pre>
+
+          <h4>Fonctionnalites</h4>
+          <ul>
+            <li>CRUD complet en local</li>
+            <li>Sauvegarde automatique a chaque modification</li>
+            <li>Restauration au chargement de la page</li>
+            <li>Proposition d'import lors de la connexion</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Schemas -->
+      <div id="schemas" class="section">
+        <h2>Schemas Zod</h2>
+        <p>Validation TypeScript-first avec Zod pour toutes les entrees.</p>
+
+        <div class="card">
+          <div class="card-title">userSchema.ts</div>
+          <div class="card-path">lib/schemas/userSchema.ts</div>
+
+          <h4>registerSchema</h4>
+          <pre>
+z.object({
+  name: z.string().min(<span class="number">2</span>).optional(),
+  email: z.email(),
+  password: z.string().min(<span class="number">6</span>),
+  confirmPassword: z.string().min(<span class="number">6</span>),
+  image: z.string().optional(),
+}).refine(
+  (data) => data.password === data.confirmPassword,
+  { message: <span class="string">'Passwords don\'t match'</span>, path: [<span class="string">'confirmPassword'</span>] }
+)
+          </pre>
+
+          <h4>loginSchema</h4>
+          <pre>
+z.object({
+  email: z.email(),
+  password: z.string().min(<span class="number">6</span>),
+})
+          </pre>
+
+          <h4>changePasswordSchema</h4>
+          <pre>
+z.object({
+  currentPassword: z.string().min(<span class="number">6</span>),
+  newPassword: z.string().min(<span class="number">6</span>),
+  confirmNewPassword: z.string().min(<span class="number">6</span>),
+}).refine(...)
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">eventSchema.ts</div>
+          <div class="card-path">lib/schemas/eventSchema.ts</div>
+
+          <h4>createEventSchema</h4>
+          <pre>
+z.object({
+  title: z.string().min(<span class="number">1</span>).max(<span class="number">200</span>),
+  description: z.string().max(<span class="number">2000</span>).optional(),
+  date: z.string().nullish(),
+  positionX: z.number().optional().default(<span class="number">0</span>),
+  positionY: z.number().optional().default(<span class="number">0</span>),
+  projectId: z.string().cuid().nullish(),
+})
+          </pre>
+
+          <h4>connectEventsSchema</h4>
+          <pre>
+z.object({
+  targetEventId: z.string().cuid(),
+  connectionType: z.nativeEnum(ConnectionType).default(<span class="string">"LINEAR"</span>),
+  order: z.number().int().min(<span class="number">0</span>).optional().default(<span class="number">0</span>),
+})
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">projectSchema.ts</div>
+          <div class="card-path">lib/schemas/projectSchema.ts</div>
+
+          <pre>
+<span class="keyword">export const</span> createProjectSchema = z.object({
+  name: z.string()
+    .min(<span class="number">1</span>, <span class="string">"Le nom est requis"</span>)
+    .max(<span class="number">100</span>, <span class="string">"Le nom est trop long"</span>),
+});
+          </pre>
+        </div>
+      </div>
+
+      <!-- Utils -->
+      <div id="utils" class="section">
+        <h2>Utilitaires</h2>
+
+        <div class="card">
+          <div class="card-title">withErrorHandler</div>
+          <div class="card-path">lib/utils/withErrorHandler.ts</div>
+          <p>Higher-Order Function pour la gestion globale des erreurs API.</p>
+
+          <h4>Utilisation</h4>
+          <pre>
+<span class="keyword">export const</span> POST = withErrorHandler(<span class="keyword">async</span> (req) => {
+  <span class="comment">// Logic...</span>
+  <span class="keyword">return</span> NextResponse.json({ data }, { status: <span class="number">200</span> });
+});
+          </pre>
+
+          <h4>Erreurs gerees</h4>
+          <table>
+            <tr><th>Type</th><th>Status</th></tr>
+            <tr><td>ZodError</td><td>400</td></tr>
+            <tr><td>UserAlreadyExistsError</td><td>409</td></tr>
+            <tr><td>PrismaClientKnownRequestError (P2002)</td><td>409</td></tr>
+            <tr><td>PrismaClientKnownRequestError (P2025)</td><td>404</td></tr>
+            <tr><td>Autres</td><td>500</td></tr>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">temporalConsistency</div>
+          <div class="card-path">lib/utils/temporalConsistency.ts</div>
+          <p>Detection des incoherences temporelles dans les timelines.</p>
+
+          <h4>detectTemporalInconsistencies(events)</h4>
+          <p>Retourne un <code>Set&lt;string&gt;</code> des IDs d'evenements avec problemes.</p>
+
+          <h4>Incoherences detectees</h4>
+          <ul>
+            <li>Connexion LINEAR vers un evenement sans date</li>
+            <li>Connexion LINEAR ou la cible est anterieure a la source</li>
+            <li>Evenements avec dates incompatibles</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">parseZodErrors</div>
+          <div class="card-path">lib/utils/parseZodErrors.ts</div>
+          <p>Convertit les erreurs Zod en objet field → message.</p>
+
+          <h4>Exemple</h4>
+          <pre>
+<span class="comment">// Input: ZodError avec issues</span>
+<span class="comment">// Output:</span>
+{
+  email: <span class="string">"Invalid email"</span>,
+  password: <span class="string">"Too short"</span>
+}
+          </pre>
+        </div>
+      </div>
+
+      <!-- Styling -->
+      <div id="styling" class="section">
+        <h2>Styling - Tailwind Variants</h2>
+        <p>Systeme de variants pour les composants reutilisables.</p>
+
+        <div class="card">
+          <div class="card-title">button.ts</div>
+          <div class="card-path">lib/tv/button.ts</div>
+
+          <h4>Variants</h4>
+          <table>
+            <tr><th>Variant</th><th>Options</th></tr>
+            <tr><td>intent</td><td>nature, outline, ghost</td></tr>
+            <tr><td>size</td><td>sm, md, lg</td></tr>
+            <tr><td>fullWidth</td><td>true, false</td></tr>
+          </table>
+
+          <h4>Utilisation</h4>
+          <pre>
+<span class="keyword">import</span> { button } <span class="keyword">from</span> <span class="string">"@tv/button"</span>;
+
+&lt;button className={button({ intent: <span class="string">"nature"</span>, size: <span class="string">"md"</span> })}&gt;
+  Cliquez-moi
+&lt;/button&gt;
+          </pre>
+        </div>
+
+        <div class="card">
+          <div class="card-title">input.ts</div>
+          <div class="card-path">lib/tv/input.ts</div>
+
+          <h4>Variants</h4>
+          <table>
+            <tr><th>Variant</th><th>Options</th></tr>
+            <tr><td>intent</td><td>nature, error, disabled</td></tr>
+            <tr><td>size</td><td>sm, md, lg</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Auth Flow -->
+      <div id="auth-flow" class="section">
+        <h2>Flux d'Authentification</h2>
+
+        <div class="diagram">
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Client    │     │   NextAuth  │     │  Database   │
+└──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+       │                   │                   │
+       │  POST /api/auth   │                   │
+       │  (credentials)    │                   │
+       │──────────────────►│                   │
+       │                   │                   │
+       │                   │  findUnique(email)│
+       │                   │──────────────────►│
+       │                   │                   │
+       │                   │◄──────────────────│
+       │                   │      User         │
+       │                   │                   │
+       │                   │  bcrypt.compare() │
+       │                   │  (local)          │
+       │                   │                   │
+       │    JWT Token      │                   │
+       │◄──────────────────│                   │
+       │                   │                   │
+       │  Set Cookie       │                   │
+       │  (session-token)  │                   │
+       │                   │                   │
+        </div>
+
+        <h3>Configuration NextAuth</h3>
+        <div class="card">
+          <div class="card-path">lib/auth/authOptions.ts</div>
+
+          <h4>Provider</h4>
+          <ul>
+            <li><strong>CredentialsProvider</strong> - Email/Password</li>
+          </ul>
+
+          <h4>Session Strategy</h4>
+          <ul>
+            <li><strong>JWT</strong> - Token stocke cote client</li>
+          </ul>
+
+          <h4>Callbacks</h4>
+          <pre>
+callbacks: {
+  jwt({ token, user }) {
+    <span class="keyword">if</span> (user) token.sub = user.id;
+    <span class="keyword">return</span> token;
+  },
+  session({ session, token }) {
+    <span class="keyword">if</span> (session.user && token.sub) {
+      session.user.id = token.sub;
+    }
+    <span class="keyword">return</span> session;
+  }
+}
+          </pre>
+        </div>
+      </div>
+
+      <!-- Middleware -->
+      <div id="middleware" class="section">
+        <h2>Middleware</h2>
+        <div class="card-path">middleware.ts</div>
+
+        <p>Rate limiting pour proteger les endpoints sensibles.</p>
+
+        <h3>Configuration</h3>
+        <table>
+          <tr><th>Parametre</th><th>Valeur</th></tr>
+          <tr><td>Limite</td><td>5 requetes</td></tr>
+          <tr><td>Fenetre</td><td>1 minute</td></tr>
+          <tr><td>Par</td><td>Adresse IP</td></tr>
+        </table>
+
+        <h3>Routes protegees</h3>
+        <ul>
+          <li><code>/api/register</code></li>
+          <li><code>/api/login</code></li>
+        </ul>
+
+        <h3>Implementation</h3>
+        <pre>
+<span class="keyword">import</span> { Ratelimit } <span class="keyword">from</span> <span class="string">"@upstash/ratelimit"</span>;
+<span class="keyword">import</span> { Redis } <span class="keyword">from</span> <span class="string">"@upstash/redis"</span>;
+
+<span class="keyword">const</span> ratelimit = <span class="keyword">new</span> Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(<span class="number">5</span>, <span class="string">"1 m"</span>),
+});
+
+<span class="keyword">export async function</span> <span class="function">middleware</span>(req) {
+  <span class="keyword">const</span> ip = req.ip ?? <span class="string">"127.0.0.1"</span>;
+  <span class="keyword">const</span> { success } = <span class="keyword">await</span> ratelimit.limit(ip);
+
+  <span class="keyword">if</span> (!success) {
+    <span class="keyword">return new</span> Response(<span class="string">"Too Many Requests"</span>, { status: <span class="number">429</span> });
+  }
+}
+        </pre>
+
+        <div class="alert alert-info">
+          <strong>Degradation gracieuse :</strong> Si les variables d'environnement Upstash ne sont pas configurees,
+          le middleware laisse passer toutes les requetes sans erreur.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Update active nav
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
+        // Show section
+        const sectionId = item.dataset.section;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+
+        // Scroll to top
+        window.scrollTo(0, 0);
+      });
+    });
+
+    // Search
+    const searchInput = document.getElementById('search');
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+
+      if (query.length < 2) {
+        // Remove highlights
+        document.querySelectorAll('.highlight').forEach(el => {
+          el.outerHTML = el.textContent;
+        });
+        return;
+      }
+
+      // Search in all sections
+      document.querySelectorAll('.section').forEach(section => {
+        const text = section.textContent.toLowerCase();
+        if (text.includes(query)) {
+          // Show matching section in nav
+          const navItem = document.querySelector(`[data-section="${section.id}"]`);
+          if (navItem) {
+            navItem.style.background = 'rgba(16, 185, 129, 0.2)';
+          }
+        } else {
+          const navItem = document.querySelector(`[data-section="${section.id}"]`);
+          if (navItem) {
+            navItem.style.background = '';
+          }
+        }
+      });
+    });
+
+    // Clear search highlight on focus out
+    searchInput.addEventListener('blur', () => {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        if (!item.classList.contains('active')) {
+          item.style.background = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -100,10 +100,12 @@ function TimelineCanvasInner({
             type: "smoothstep",
             animated: connection.type === "TIMETRAVEL",
             style: {
-              stroke: connection.type === "TIMETRAVEL" ? "#9333ea" : "#3b82f6",
+              stroke: connection.type === "TIMETRAVEL" ? "#a855f7" : "#22c55e",
               strokeWidth: 2,
             },
-            label: connection.type === "TIMETRAVEL" ? "🔄 Time Travel" : undefined,
+            label: connection.type === "TIMETRAVEL" ? "Time Travel" : undefined,
+            labelStyle: { fill: "#a855f7", fontWeight: 500 },
+            labelBgStyle: { fill: "#1f1f1f", fillOpacity: 0.9 },
           });
         }
       });
@@ -192,24 +194,29 @@ function TimelineCanvasInner({
         nodeTypes={nodeTypes}
         fitView
         attributionPosition="bottom-left"
+        style={{ backgroundColor: "#1a1a1a" }}
       >
-        <Background />
-        <Controls />
-        <MiniMap />
-        <Panel position="top-left" className="bg-white p-4 rounded-lg shadow-lg">
+        <Background color="#333" gap={20} />
+        <Controls className="!bg-dark-200 !border-dark-400 !shadow-lg [&>button]:!bg-dark-300 [&>button]:!border-dark-500 [&>button]:!text-gray-300 [&>button:hover]:!bg-dark-400" />
+        <MiniMap
+          nodeColor="#22c55e"
+          maskColor="rgba(0, 0, 0, 0.7)"
+          style={{ backgroundColor: "#1f1f1f" }}
+        />
+        <Panel position="top-left" className="bg-dark-200 p-4 rounded-lg shadow-lg border border-dark-400">
           <div className="space-y-2">
-            <h3 className="font-bold text-lg">Timeline Builder</h3>
-            <div className="text-sm text-gray-600 space-y-1">
+            <h3 className="font-bold text-lg text-white">Timeline Builder</h3>
+            <div className="text-sm text-gray-400 space-y-1">
               <p>• Utilisez le bouton en haut à droite pour créer un événement</p>
               <p>• Reliez les événements en glissant entre eux</p>
               <p>• Sélectionnez un node et appuyez sur Delete pour supprimer</p>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-4 h-0.5 bg-blue-500"></div>
+            <div className="flex items-center gap-2 text-sm text-gray-300">
+              <div className="w-4 h-0.5 bg-green-500"></div>
               <span>Connexion linéaire</span>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-4 h-0.5 bg-purple-600"></div>
+            <div className="flex items-center gap-2 text-sm text-gray-300">
+              <div className="w-4 h-0.5 bg-purple-500"></div>
               <span>Voyage temporel</span>
             </div>
           </div>

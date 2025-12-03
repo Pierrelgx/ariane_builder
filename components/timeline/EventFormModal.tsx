@@ -74,15 +74,15 @@ export default function EventFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-black rounded-lg shadow-xl w-full max-w-md p-6 border border-dark-400">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-white">
             {eventId ? "Modifier l'événement" : "Nouvel événement"}
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-500 hover:text-gray-300"
             disabled={isSubmitting}
           >
             <svg
@@ -102,7 +102,7 @@ export default function EventFormModal({
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-sm">
             {error}
           </div>
         )}
@@ -111,16 +111,16 @@ export default function EventFormModal({
           <div>
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
-              Titre <span className="text-red-500">*</span>
+              Titre <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-dark-500 rounded-md bg-dark-300 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-gray-500"
               placeholder="Ex: Découverte de la machine à voyager dans le temps"
               required
               disabled={isSubmitting}
@@ -130,7 +130,7 @@ export default function EventFormModal({
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Description
             </label>
@@ -139,7 +139,7 @@ export default function EventFormModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-dark-500 rounded-md bg-dark-300 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-gray-500"
               placeholder="Décrivez l'événement..."
               disabled={isSubmitting}
             />
@@ -148,7 +148,7 @@ export default function EventFormModal({
           <div>
             <label
               htmlFor="date"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Date
             </label>
@@ -157,7 +157,7 @@ export default function EventFormModal({
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-dark-500 rounded-md bg-dark-300 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 [color-scheme:dark]"
               disabled={isSubmitting}
             />
           </div>
@@ -166,14 +166,14 @@ export default function EventFormModal({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="flex-1 px-4 py-2 border border-dark-500 rounded-md text-gray-300 hover:bg-dark-400 disabled:opacity-50"
               disabled={isSubmitting}
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 disabled:opacity-50"
               disabled={isSubmitting}
             >
               {isSubmitting
