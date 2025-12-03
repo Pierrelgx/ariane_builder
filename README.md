@@ -1,4 +1,4 @@
-# Ariane World Builder
+# Ariane World Builder (projet de stage de Ludovic)
 
 Application de création et visualisation de timelines narratives avec gestion des voyages temporels.
 
